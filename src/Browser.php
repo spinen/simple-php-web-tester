@@ -89,10 +89,14 @@ trait Browser
      * Force the execution to abort if page cannot load
      *
      * @param bool $flag
+     *
+     * @return $this
      */
     public function abortOnFail($flag = true)
     {
         $this->abort_on_error = (bool)$flag;
+
+        return $this;
     }
 
     /**
