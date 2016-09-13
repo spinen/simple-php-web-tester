@@ -53,14 +53,14 @@ trait Browser
 
         $this->determinePath();
 
-        $command = $this->buildEnvironmentVariables() .
-                   $this->buildCallToScript();// . $this->buildQueryVariables($query);
+        // NOTE: This is out until the windows issue denoted below is fixed
+        // $command = $this->buildEnvironmentVariables() .
+        $command = $this->buildCallToScript() . $this->buildQueryVariables($query);
 
         $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {
-            //            throw new ProcessFailedException($process);
             $this->successful = false;
 
             return $this;
