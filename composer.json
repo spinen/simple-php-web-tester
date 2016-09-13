@@ -1,0 +1,42 @@
+{
+    "name": "spinen/spinen-php-web-tester",
+    "description": "Simple Tester for PHP web sites.",
+    "keywords": [
+        "phpunit",
+        "php web site",
+        "library",
+        "spinen"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jimmy Puckett",
+            "email": "jimmy.puckett@spinen.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "symfony/dom-crawler": "^3.1",
+        "symfony/process": "^3.1"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "^1.6",
+        "nesbot/carbon": "^1.21",
+        "phpunit/phpunit": "~5.4",
+        "psy/psysh": "0.7.*",
+        "symfony/var-dumper": "3.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spinen\\SimplePhpTester\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spinen\\SimplePhpTester\\": "tests/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}
