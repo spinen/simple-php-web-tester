@@ -4,11 +4,19 @@ namespace Spinen\SimplePhpTester;
 
 use ReflectionClass;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 trait Browser
 {
+    /**
+     * Trigger script to fail on inability to load script
+     *
+     * @var bool
+     */
+    protected $abort_on_error = false;
+
     /**
      * Parsed output
      *
@@ -63,6 +71,10 @@ trait Browser
         if (!$process->isSuccessful()) {
             $this->successful = false;
 
+            if ($this->abort_on_error) {
+                throw new ProcessFailedException($process);
+            }
+
             return $this;
         }
 
@@ -71,6 +83,16 @@ trait Browser
         $this->crawler = new Crawler($process->getOutput(), $uri);
 
         return $this;
+    }
+
+    /**
+     * Force the execution to abort if page cannot load
+     *
+     * @param bool $flag
+     */
+    public function abortOnFail($flag = true)
+    {
+        $this->abort_on_error = (bool)$flag;
     }
 
     /**
