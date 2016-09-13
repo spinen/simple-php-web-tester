@@ -4,36 +4,46 @@ namespace Spinen\SimplePhpTester;
 
 use ReflectionClass;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 trait Browser
 {
     /**
+     * Parsed output
+     *
      * @var Crawler
      */
     protected $crawler;
 
     /**
+     * Location that we are testing
+     *
      * @var string
      */
     protected $path;
 
     /**
+     * Did the script load OK?
+     *
      * @var null|boolean
      */
     protected $successful = null;
 
     /**
+     * Folder that contains the web files
+     *
      * @var string
      */
     protected $web_root = 'public';
 
     /**
+     * "Visit" a page
      *
+     * Take a uri & pretend that we vested it by running it through the php processor to get the output.  Then let the
+     * DomCrawler parse the output.
      *
-     * @param $uri
+     * @param string $uri
      *
      * @return $this
      */
@@ -43,13 +53,14 @@ trait Browser
 
         $this->determinePath();
 
-        $command = $this->buildEnvironmentVariables() . $this->buildCallToScript() . $this->buildQueryVariables($query);
+        $command = $this->buildEnvironmentVariables() .
+                   $this->buildCallToScript();// . $this->buildQueryVariables($query);
 
         $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {
-//            throw new ProcessFailedException($process);
+            //            throw new ProcessFailedException($process);
             $this->successful = false;
 
             return $this;
@@ -63,6 +74,8 @@ trait Browser
     }
 
     /**
+     * Full path to php-cgi with the full path to the script
+     *
      * @return string
      */
     protected function buildCallToScript()
@@ -71,13 +84,12 @@ trait Browser
     }
 
     /**
-     * @return null|string
+     * Push variables into php, so that they are there as $_SERVER
+     *
+     * @return string
      */
     protected function buildEnvironmentVariables()
     {
-        // TODO: Figure out how to pass vars in windows
-        return null;
-
         $prefix = '';
         $prepend = ' ';
 
@@ -86,10 +98,13 @@ trait Browser
             $prepend = ';';
         }
 
+        // TODO: Figure out how to pass vars in windows
         return "${prefix}REQUEST_URI='/${path}'${prepend}${prefix}SCRIPT_NAME='/${path}'${prepend}";
     }
 
     /**
+     * Format the query string parameters as the php-cgi needs them
+     *
      * @param $query
      *
      * @return null|string
@@ -123,7 +138,7 @@ trait Browser
     }
 
     /**
-     *
+     * Normalize the path
      */
     protected function determinePath()
     {
@@ -135,6 +150,10 @@ trait Browser
     }
 
     /**
+     * Getter for the webroot
+     *
+     * Don't allow it to have a slash on the front or end
+     *
      * @return string
      */
     protected function getWebRoot()
@@ -143,6 +162,8 @@ trait Browser
     }
 
     /**
+     * Full path to the php-cgi binary
+     *
      * @return mixed
      */
     protected function phpCgiScriptPath()
@@ -151,6 +172,8 @@ trait Browser
     }
 
     /**
+     * Allow setting the root
+     *
      * @param $web_root
      *
      * @return $this
