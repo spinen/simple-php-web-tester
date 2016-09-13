@@ -35,7 +35,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     public function dump()
     {
-        var_dump($this->crawler ? $this->crawler->html() : 'No HTML to dump', false);
+        print_r($this->crawler ? $this->crawler->html() : 'No HTML to dump');
 
         return $this;
     }
