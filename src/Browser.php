@@ -71,6 +71,8 @@ trait Browser
         if (!$process->isSuccessful()) {
             $this->successful = false;
 
+            var_dump("Fail");
+
             if ($this->abort_on_error) {
                 throw new ProcessFailedException($process);
             }
@@ -78,9 +80,13 @@ trait Browser
             return $this;
         }
 
+        var_dump("Worked");
+
         $this->successful = true;
 
         $this->crawler = new Crawler($process->getOutput(), $uri);
+
+        var_dump($this->crawler);
 
         return $this;
     }
