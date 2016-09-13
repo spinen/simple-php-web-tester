@@ -72,6 +72,13 @@ trait Browser
             $this->successful = false;
 
             var_dump("Fail");
+            var_dump('========CODE');
+            var_dump($process->getExitCode(),false);
+            var_dump('========ERROR');
+            var_dump($process->getErrorOutput(), false);
+            var_dump('========OUT');
+            var_dump($process->getOutput(), false);
+
 
             if ($this->abort_on_error) {
                 throw new ProcessFailedException($process);
