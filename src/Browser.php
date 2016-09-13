@@ -2,6 +2,7 @@
 
 namespace Spinen\SimplePhpTester;
 
+use ReflectionClass;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -103,11 +104,16 @@ trait Browser
     }
 
     /**
+     * Build out the full path the script
+     *
+     * Since this file gets extended by a test case, __DIR__ will not work as it points to this file.  Use reflection to
+     * review the class to get the directory.
+     *
      * @return string
      */
     protected function determinedFullPath()
     {
-        return __DIR__ .
+        return dirname((new ReflectionClass($this))->getFileName()) .
                DIRECTORY_SEPARATOR .
                '..' .
                DIRECTORY_SEPARATOR .
