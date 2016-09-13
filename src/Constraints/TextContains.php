@@ -2,10 +2,9 @@
 
 namespace Spinen\SimplePhpTester\Constraints;
 
-use PHPUnit_Framework_Constraint;
 use Symfony\Component\DomCrawler\Crawler;
 
-class TextContains extends PHPUnit_Framework_Constraint
+class TextContains extends BrowserConstraint
 {
     /**
      * The text that should be found
@@ -39,7 +38,7 @@ class TextContains extends PHPUnit_Framework_Constraint
     public function matches($crawler)
     {
         // TODO: Need to deal with possible escaping "/"
-        return preg_match("|({$this->text})|i", $crawler->text());
+        return preg_match("|({$this->text})|i", $this->getText($crawler));
     }
 
     protected function failureDescription($other)

@@ -2,9 +2,7 @@
 
 namespace Spinen\SimplePhpTester\Constraints;
 
-use PHPUnit_Framework_Constraint;
-
-class PageLoaded extends PHPUnit_Framework_Constraint
+class PageLoaded extends BrowserConstraint
 {
     /**
      * The path loaded
