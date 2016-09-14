@@ -61,24 +61,13 @@ trait Browser
 
         $this->determinePath();
 
-        // NOTE: This is out until the windows issue denoted below is fixed
-        // $command = $this->buildEnvironmentVariables() .
-        $command = $this->buildCallToScript() . $this->buildQueryVariables($query);
+        $command = $this->buildEnvironmentVariables($query) . $this->buildCallToScript();
 
         $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {
             $this->successful = false;
-
-            var_dump("Fail");
-            var_dump('========CODE');
-            var_dump($process->getExitCode(),false);
-            var_dump('========ERROR');
-            var_dump($process->getErrorOutput(), false);
-            var_dump('========OUT');
-            var_dump($process->getOutput(), false);
-
 
             if ($this->abort_on_error) {
                 throw new ProcessFailedException($process);
@@ -87,13 +76,9 @@ trait Browser
             return $this;
         }
 
-        var_dump("Worked");
-
         $this->successful = true;
 
         $this->crawler = new Crawler($process->getOutput(), $uri);
-
-        var_dump($this->crawler);
 
         return $this;
     }
@@ -119,42 +104,60 @@ trait Browser
      */
     protected function buildCallToScript()
     {
-        return $this->phpCgiScriptPath() . ' -f "' . $this->determinedFullPath($this->path) . '"';
+        if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
+            return (new PhpExecutableFinder)->find(false) .
+                   ' -e -r "parse_str($_SERVER[\"QUERY_STRING\"], $_GET); include \"' .
+                   $this->determinedFullPath($this->path) .
+                   '\";"';
+        }
+
+        return (new PhpExecutableFinder)->find(false) .
+               ' -e -r \'parse_str($_SERVER["QUERY_STRING"], $_GET); include "' .
+               $this->determinedFullPath($this->path) .
+               '";\'';
     }
 
     /**
      * Push variables into php, so that they are there as $_SERVER
      *
+     * @param string $query
+     *
      * @return string
      */
-    protected function buildEnvironmentVariables()
+    protected function buildEnvironmentVariables($query)
     {
-        $prefix = '';
-        $prepend = ' ';
+        // Mac/UNIX defaults
+        $command = 'export';
+        $chain = '&&';
 
+        // Windows specific
         if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
-            $prefix = 'SET ';
-            $prepend = ';';
+            $command = 'set';
+            $chain = '&';
+            $query = str_replace('&', '^&', $query);
         }
 
-        // TODO: Figure out how to pass vars in windows
-        return "${prefix}REQUEST_URI='/${path}'${prepend}${prefix}SCRIPT_NAME='/${path}'${prepend}";
-    }
+        // Environmental variables to set
+        $variables = [
+            'REQUEST_URI'  => $this->path,
+            'SCRIPT_NAME'  => $this->path,
+            'QUERY_STRING' => $query,
+        ];
 
-    /**
-     * Format the query string parameters as the php-cgi needs them
-     *
-     * @param $query
-     *
-     * @return null|string
-     */
-    protected function buildQueryVariables($query)
-    {
-        if (is_null($query)) {
-            return null;
+        // Mac/UNIX requires variables to be in enclosed in quotes if there is a space
+        if (strncasecmp(PHP_OS, 'WIN', 3) != 0) {
+            $variables = array_map(function ($value) {
+                return '"' . str_replace('"', '\"', $value) . '"';
+            }, $variables);
         }
 
-        return ' ' . str_replace('&', ' ', $query);
+        $line = null;
+
+        foreach ($variables as $variable => $value) {
+            $line .= "${command} ${variable}=${value} ${chain} ";
+        }
+
+        return $line;
     }
 
     /**
@@ -198,16 +201,6 @@ trait Browser
     protected function getWebRoot()
     {
         return trim($this->web_root, "/");
-    }
-
-    /**
-     * Full path to the php-cgi binary
-     *
-     * @return mixed
-     */
-    protected function phpCgiScriptPath()
-    {
-        return preg_replace("/(php)(\\.exe)?$/um", "$1-cgi$2", (new PhpExecutableFinder)->find(false));
     }
 
     /**
