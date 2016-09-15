@@ -2,6 +2,7 @@
 
 namespace Spinen\SimplePhpTester;
 
+use InvalidArgumentException;
 use ReflectionClass;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -32,6 +33,13 @@ trait Browser
     protected $path;
 
     /**
+     * The response from the call
+     *
+     * @var null|string
+     */
+    protected $response = null;
+
+    /**
      * Did the script load OK?
      *
      * @var null|boolean
@@ -44,44 +52,6 @@ trait Browser
      * @var string
      */
     protected $web_root = 'public';
-
-    /**
-     * "Visit" a page
-     *
-     * Take a uri & pretend that we vested it by running it through the php processor to get the output.  Then let the
-     * DomCrawler parse the output.
-     *
-     * @param string $uri
-     *
-     * @return $this
-     */
-    public function visit($uri)
-    {
-        list($this->path, $query) = array_pad(explode('?', $uri), 2, null);
-
-        $this->determinePath();
-
-        $command = $this->buildEnvironmentVariables($query) . $this->buildCallToScript();
-
-        $process = new Process($command);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            $this->successful = false;
-
-            if ($this->abort_on_error) {
-                throw new ProcessFailedException($process);
-            }
-
-            return $this;
-        }
-
-        $this->successful = true;
-
-        $this->crawler = new Crawler($process->getOutput(), $uri);
-
-        return $this;
-    }
 
     /**
      * Force the execution to abort if page cannot load
@@ -154,10 +124,37 @@ trait Browser
         $line = null;
 
         foreach ($variables as $variable => $value) {
-            $line .= "${command} ${variable}=${value} ${chain} ";
+            $line .= "${command} ${variable}=${value}${chain}";
         }
 
         return $line;
+    }
+
+    /**
+     * Click a link with the given body, name, or ID attribute.
+     *
+     * @param  string $name
+     *
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function click($name)
+    {
+        $link = $this->crawler->selectLink($name);
+
+        if (!count($link)) {
+            $link = $this->filterByNameOrId($name, 'a');
+
+            if (!count($link)) {
+                throw new InvalidArgumentException("Could not find a link with a body, name, or ID attribute of [{$name}].");
+            }
+        }
+
+        $this->visit($link->link()
+                          ->getUri());
+
+        return $this;
     }
 
     /**
@@ -170,11 +167,12 @@ trait Browser
      */
     protected function determinedFullPath()
     {
-        return dirname((new ReflectionClass($this))->getFileName()) .
+        // TODO: See why windows cannot use the the full path
+        /*return dirname((new ReflectionClass($this))->getFileName()) .
                DIRECTORY_SEPARATOR .
                '..' .
-               DIRECTORY_SEPARATOR .
-               $this->getWebRoot() .
+               DIRECTORY_SEPARATOR .*/
+        return $this->getWebRoot() .
                DIRECTORY_SEPARATOR .
                $this->path;
     }
@@ -213,6 +211,46 @@ trait Browser
     public function setWebRoot($web_root)
     {
         $this->web_root = $web_root;
+
+        return $this;
+    }
+
+    /**
+     * "Visit" a page
+     *
+     * Take a uri & pretend that we vested it by running it through the php processor to get the output.  Then let the
+     * DomCrawler parse the output.
+     *
+     * @param string $uri
+     *
+     * @return $this
+     */
+    public function visit($uri)
+    {
+        list($this->path, $query) = array_pad(explode('?', $uri), 2, null);
+
+        $this->determinePath();
+
+        $command = $this->buildEnvironmentVariables($query) . $this->buildCallToScript();
+
+        $process = new Process($command);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            $this->successful = false;
+
+            if ($this->abort_on_error) {
+                throw new ProcessFailedException($process);
+            }
+
+            return $this;
+        }
+
+        $this->successful = true;
+
+        $this->response = $process->getOutput();
+
+        $this->crawler = new Crawler($this->response, $uri);
 
         return $this;
     }

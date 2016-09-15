@@ -12,6 +12,8 @@ class ServerCreationTest extends TestTestCase
         $this->visit('/')
              ->assertPageLoaded()
              ->see('<h1>SPINEN Simple PHP Web Tester</h1>')
-             ->seeText('SPINEN Simple PHP Web Tester');
+             ->seeText('SPINEN Simple PHP Web Tester')
+             ->seeLink('Link To Somewhere')
+             ->click('Link To Somewhere');
     }
 }
