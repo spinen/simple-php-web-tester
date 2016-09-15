@@ -40,7 +40,6 @@ Here is a list of the assertions that are provided...
 * dontSeeIsSelected
 * dontSeeLink
 * dontSeeText
-* dump
 * see
 * seeElement
 * seeInElement
@@ -91,3 +90,7 @@ class HomeTest extends TestCase
     }
 }
 ```
+
+## Troubleshooting
+
+You can call the `dump` method on your chain of commands to print out the rendered HTML.
