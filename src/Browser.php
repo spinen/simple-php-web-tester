@@ -167,11 +167,12 @@ trait Browser
      */
     protected function determinedFullPath()
     {
-        return dirname((new ReflectionClass($this))->getFileName()) .
+        // TODO: See why windows cannot use the the full path
+        /*return dirname((new ReflectionClass($this))->getFileName()) .
                DIRECTORY_SEPARATOR .
                '..' .
-               DIRECTORY_SEPARATOR .
-               $this->getWebRoot() .
+               DIRECTORY_SEPARATOR .*/
+        return $this->getWebRoot() .
                DIRECTORY_SEPARATOR .
                $this->path;
     }
