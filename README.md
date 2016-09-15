@@ -1,6 +1,6 @@
 # Simple Tester for PHP web sites
 
-We were wanting a testing framework very similar to Laravel's to run acceptance like test on basic php sites.  This was build to help a college class learn about TDD in a dynamic content class.  We wanted to use Laravel's constraints that is in the Foundation section, but they no longer subspilt that code out into a readonly Illuminate repository.  We are requiring the Laravel Framework just to get the constrain, so it pulls in a great many packages.  Therefore, only require this package in the dev section.
+We were wanting a testing framework very similar to Laravel's to run acceptance-like tests on basic php sites.  This was built to help a college class learn about TDD in a dynamic content class.  We wanted to use Laravel's constraints that are in the Foundation section, but they no longer subsplit that code out into a read-only Illuminate repository.  We are requiring the Laravel Framework just to get the constraints, but it's going to pull in many packages.  Therefore, only require this package in the dev section.
 
 ## Credits
 
@@ -14,17 +14,17 @@ composer require --dev spinen/spinen-php-web-tester
 
 ## Usage
 
-You can either extend an abstract class that we provide or use the traits that provides the functionality
+You can either extend an abstract class that we provide or use the traits that provides the functionality.
 
 1. Extend `Spinen\SimplePhpTester\TestCase` so that you will have access to the test.
 2. Mixin the test by `use`ing `Spinen\SimplePhpTester\Browser` and `Spinen\SimplePhpTester\PageAssertions` in your testfile.
 
 ## Configuration
 
-The test assume that your web files are in a directory named `public` in directory that you are running phpunit.  If that is not the case, then you have 3 options...
+The test assumes that your web files are in a directory named `public`.  If that is not the case, then you have 3 options...
 
 1. Add a protected property to your test class named `$web_root` with the name of the directory (i.e. `protected $web_root = 'web';`).
-2. Call `setWebRoot` with the directory realative to the directory that you are running phpunit (i.e. `$this->setWebRoot('web');`).
+2. Call `setWebRoot` with the directory relative to the directory that you are running phpunit (i.e. `$this->setWebRoot('web');`).
 3. Add a protected method to your test class named `determinedFullPath` that builds the full path to the directory of the script being tested.
 
 ## Assertions
