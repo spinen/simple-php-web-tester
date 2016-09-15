@@ -14,6 +14,16 @@ use Illuminate\Foundation\Testing\Constraints\PageConstraint;
 use Illuminate\Foundation\Testing\Constraints\ReversePageConstraint;
 use Spinen\SimplePhpTester\Constraints\PageLoaded;
 
+/**
+ * Class PageAssertions
+ *
+ * There is a great deal of this code that is a direct copy & paste form Larevel's InteractsWithPages trait.  We would
+ * Have just used his trait, but it relies on booting Laravel, so re wrote this class & pulled over the pieces that we
+ * could reuse.
+ *
+ * @see https://github.com/laravel/framework/blob/5.3/src/Illuminate/Foundation/Testing/Concerns/InteractsWithPages.php
+ * @package Spinen\SimplePhpTester
+ */
 trait PageAssertions
 {
     /**
