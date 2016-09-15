@@ -124,7 +124,7 @@ trait Browser
         $line = null;
 
         foreach ($variables as $variable => $value) {
-            $line .= "${command} ${variable}=${value} ${chain} ";
+            $line .= "${command} ${variable}=${value}${chain}";
         }
 
         return $line;
