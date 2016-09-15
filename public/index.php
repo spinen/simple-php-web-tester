@@ -9,6 +9,7 @@
     <h1>SPINEN Simple PHP Web Tester</h1>
     <p>The time currently is: <?php echo Carbon\Carbon::now(); ?></p>
     <h2>$_GET vars</h2>
+    <p><a href="/somewhere.php">Link To Somewhere</a></p>
     <pre><?php var_export($_GET); ?></pre>
 </body>
 </html>
