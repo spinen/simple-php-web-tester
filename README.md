@@ -16,39 +16,39 @@ composer require --dev spinen/spinen-php-web-tester
 
 You can either extend an abstract class that we provide or use the traits that provides the functionality
 
-    1. Extend `Spinen\SimplePhpTester\TestCase` so that you will have access to the test.
-    2. Mixin the test by `use`ing `Spinen\SimplePhpTester\Browser` and `Spinen\SimplePhpTester\PageAssertions` in your testfile.
+1. Extend `Spinen\SimplePhpTester\TestCase` so that you will have access to the test.
+2. Mixin the test by `use`ing `Spinen\SimplePhpTester\Browser` and `Spinen\SimplePhpTester\PageAssertions` in your testfile.
 
 ## Configuration
 
 The test assume that your web files are in a directory named `public` in directory that you are running phpunit.  If that is not the case, then you have 3 options...
 
-    1. Add a protected property to your test class named `$web_root` with the name of the directory (i.e. `protected $web_root = 'web';`).
-    2. Call `setWebRoot` with the directory realative to the directory that you are running phpunit (i.e. `$this->setWebRoot('web');`).
-    3. Add a protected method to your test class named `determinedFullPath` that builds the full path to the directory of the script being tested.
+1. Add a protected property to your test class named `$web_root` with the name of the directory (i.e. `protected $web_root = 'web';`).
+2. Call `setWebRoot` with the directory realative to the directory that you are running phpunit (i.e. `$this->setWebRoot('web');`).
+3. Add a protected method to your test class named `determinedFullPath` that builds the full path to the directory of the script being tested.
 
 ## Assertions
 
 Here is a list of the assertions that are provided...
 
-    * assertPageLoaded
-    * dontSee
-    * dontSeeElement
-    * dontSeeInElement
-    * dontSeeInField
-    * dontSeeIsChecked
-    * dontSeeIsSelected
-    * dontSeeLink
-    * dontSeeText
-    * dump
-    * see
-    * seeElement
-    * seeInElement
-    * seeInField
-    * seeIsChecked
-    * seeIsSelected
-    * seeLink
-    * seeText
+* assertPageLoaded
+* dontSee
+* dontSeeElement
+* dontSeeInElement
+* dontSeeInField
+* dontSeeIsChecked
+* dontSeeIsSelected
+* dontSeeLink
+* dontSeeText
+* dump
+* see
+* seeElement
+* seeInElement
+* seeInField
+* seeIsChecked
+* seeIsSelected
+* seeLink
+* seeText
 
 ## Example Test
 
